@@ -24,30 +24,50 @@ if (!fs.existsSync('./programmers.json')) {
 }
 
 // Build our routes
-
-app.get('/', (req, res) => {
-  res.send('Fill me in to return ALL programmers!');
+// get /all gives list of all programmers
+app.get('/all', (req, res) => {
+  res.send(database);
+  
 });
 
 app.get('/:id', (req, res) => {
+  // written with help from Eris
+  // return slave programmer by ID
   const id = req.params.id;
-
-  res.send(`Fill me in to return values with ID: ${id}`);
+  let slave = database.find(o => o[id]);
+  res.send(slave);
 });
 
+// update programmer by ID
 app.put('/:id', (req, res) => {
   const id = req.params.id;
+  let slave = database.find(o => o[id]);
+  
+  // update all slave data with newly provided data
+  slave.firstName = body.firstName;
+  slave.lastName = body.lastName;
+  slave.homeAddress = body.homeAddress;
+  slave.SID = body.SID;
+  slave.goodSlave = body.goodSlave;
+  slave.beatingsToDate = body.parseInt(body.beatingsToDate);
+  
+  slave.family.wife = body.slave.family.wife;
+  slave.family.husband = body.slave.family.husband;
+  slave.family.children = body.slave.family.children;
 
-  res.send(`Fill me in to update values with ID: ${id}`);
+  res.send(slave);
 });
 
 app.post('/', (req, res) => {
   const body = req.body; // Hold your JSON in here!
-
+  database.push(body); 
   res.send(`You sent: ${body}`);
 });
 
-// IMPLEMENT A ROUTE TO HANDLE ALL OTHER ROUTES AND RETURN AN ERROR MESSAGE
+// handle invalid requests by sending 'ERROR'
+app.all('/*', (req,res) => {
+  res.send('ERROR');
+});
 
 app.listen(port, () => {
   console.log(`She's alive on port ${port}`);
